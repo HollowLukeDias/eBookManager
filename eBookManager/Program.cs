@@ -16,7 +16,7 @@ namespace Testing
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(true);
-            Application.Run(new ImportBooks());
+            Application.Run(new eBookManager());
         }
     }
 }

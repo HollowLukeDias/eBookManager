@@ -5,9 +5,14 @@ using System.Text;
 
 namespace eBookManager.Engine
 {
-    class DocumentEngine
+    public class DocumentEngine
     {
-        
+     
+        /// <summary>
+        /// Returns a tuple with useful file properties
+        /// </summary>
+        /// <param name="filePath"></param>
+        /// <returns></returns>
         public (DateTime dateCreated,
                 DateTime lastDateAccessed,
                 string fileName,

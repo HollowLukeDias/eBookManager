@@ -5,6 +5,7 @@ namespace eBookManager.Engine
     public class Document
     {
         public string        Title          { get; set; }
+        public string        Author         { get; set; }
         public string        FileName       { get; set; }
         public string        Extension      { get; set; }
         public DateTime      LastAccessed   { get; set; }

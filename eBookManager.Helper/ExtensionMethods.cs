@@ -11,6 +11,13 @@ namespace eBookManager.Helper
 {
     public static class ExtensionMethods
     {
+
+        /// <summary>
+        /// Tries to parse into an integer
+        /// </summary>
+        /// <param name="value"></param>
+        /// <param name="defaultInteger"></param>
+        /// <returns></returns>
         public static int ToInt(this string value, int defaultInteger = 0)
         {
             try
@@ -30,9 +37,22 @@ namespace eBookManager.Helper
             }
         }
 
+        /// <summary>
+        /// Turns the bytes ammount into MegaBytes
+        /// </summary>
+        /// <param name="bytes"></param>
+        /// <returns></returns>
         public static double ToMegaBytes(this long bytes) 
             => ( bytes > 0) ? ((bytes / 1024f) / 1024f) : bytes;
 
+
+        /// <summary>
+        /// Checks if a storage space already exists
+        /// </summary>
+        /// <param name="space"></param>
+        /// <param name="nameValueToCheck"></param>
+        /// <param name="storageSpaceId"></param>
+        /// <returns></returns>
         public static bool StorageSpaceExists(this List<StorageSpace> space, string nameValueToCheck, out int storageSpaceId)
         {
             bool exists = false;
@@ -49,6 +69,13 @@ namespace eBookManager.Helper
             return exists;
         }
 
+        /// <summary>
+        /// Asynchronously write into the data store
+        /// </summary>
+        /// <param name="value"></param>
+        /// <param name="storagePath"></param>
+        /// <param name="appendToExistingFile"></param>
+        /// <returns></returns>
         public async static Task WriteToDataStore(this List<StorageSpace> value,
             string storagePath, bool appendToExistingFile = false)
         {
@@ -56,6 +83,12 @@ namespace eBookManager.Helper
                 await JsonSerializer.SerializeAsync(fs, value);
         }
         
+        /// <summary>
+        /// Adynchronously reads from the data store
+        /// </summary>
+        /// <param name="value"></param>
+        /// <param name="storagePath"></param>
+        /// <returns></returns>
         public async static Task<List<StorageSpace>> ReadFromDataStore(this List<StorageSpace> value, string storagePath)
         {
             if(!File.Exists(storagePath))
