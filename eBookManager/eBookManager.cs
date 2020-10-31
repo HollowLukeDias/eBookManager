@@ -23,7 +23,7 @@ namespace Testing
         {
             _spaces = await _spaces.ReadFromDataStore(_jsonPath); 
             
-            //These are created in here their images can be found and used
+            //These are used because .Net Core 3 does not support binary serialization
 
             // imageList1 
             imageList1.Images.Add("storage_space_cloud.png", Image.FromFile("img/storage_space_cloud.png")); 
@@ -62,12 +62,36 @@ namespace Testing
 
         private void btnReadEbook_Click(object sender, EventArgs e)
         {
-
+            string filePath = txtFilePath.Text;
+            FileInfo fileInfo = new FileInfo(filePath);
+            if (fileInfo.Exists)
+            {
+                Process.Start("explorer.exe", Path.GetDirectoryName(filePath));
+            }
         }
 
         private void lstBooks_MouseClick(object sender, EventArgs e)
         {
+            ListViewItem selectedBook = lstBooks.SelectedItems[0];
+            if (!String.IsNullOrEmpty(selectedBook.Tag.ToString()))
+            {
+                //Sets the information of the selected book
+                Document ebook        = (Document)selectedBook.Tag;
 
+                txtFileName.Text      = ebook.FileName; 
+                txtExtension.Text     = ebook.Extension; 
+                dtLastAccessed.Value  = ebook.LastAccessed;
+                dtCreated.Value       = ebook.Created;
+                txtFilePath.Text      = ebook.FilePath;
+                txtFileSize.Text      = ebook.FileSize;
+                txtTitle.Text         = ebook.Title; 
+                txtAuthor.Text        = ebook.Author; 
+                txtPublisher.Text     = ebook.Publisher; 
+                txtPrice.Text         = ebook.Price;
+                txtISBN.Text          = ebook.ISBN; 
+                dtDatePublished.Value = ebook.PublishDate; 
+                txtCategory.Text      = ebook.Category;
+            }
         }
 
         private async void mnuImportEbooks_Click(object sender, EventArgs e)
