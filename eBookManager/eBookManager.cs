@@ -45,6 +45,10 @@ namespace Testing
             Icon = new System.Drawing.Icon("ico/mainForm.ico");
             PopulateStorageSpaceList();
         } 
+
+        /// <summary>
+        /// Just populates the list with all the storage spaces previously created
+        /// </summary>
         private void PopulateStorageSpaceList() 
         { 
             lstStorageSpaces.Clear();
@@ -60,14 +64,27 @@ namespace Testing
             }
         }
 
+        /// <summary>
+        /// Open the directory in which the file you clicked to read is located
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void btnReadEbook_Click(object sender, EventArgs e)
         {
-            string filePath = txtFilePath.Text;
-            FileInfo fileInfo = new FileInfo(filePath);
-            if (fileInfo.Exists)
+            try
             {
+                string filePath = txtFilePath.Text;
+                if (filePath == "") throw new Exception("There are no books selected!");
+
+                FileInfo fileInfo = new FileInfo(filePath);
+                if (!fileInfo.Exists) throw new Exception("The selected book has been deleted or moved!");
                 Process.Start("explorer.exe", Path.GetDirectoryName(filePath));
             }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+
         }
 
         private void lstBooks_MouseClick(object sender, EventArgs e)
@@ -94,6 +111,11 @@ namespace Testing
             }
         }
 
+        /// <summary>
+        /// Opens the ImportBooks form, allowing the user to create virtual spaces and import the books
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private async void mnuImportEbooks_Click(object sender, EventArgs e)
         {
             ImportBooks import = new ImportBooks();

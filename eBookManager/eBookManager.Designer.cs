@@ -91,7 +91,7 @@
             // mnuImportEbooks
             // 
             this.mnuImportEbooks.Name = "mnuImportEbooks";
-            this.mnuImportEbooks.Size = new System.Drawing.Size(189, 26);
+            this.mnuImportEbooks.Size = new System.Drawing.Size(224, 26);
             this.mnuImportEbooks.Text = "Import eBooks";
             this.mnuImportEbooks.Click += new System.EventHandler(this.mnuImportEbooks_Click);
             // 
