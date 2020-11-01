@@ -73,11 +73,14 @@ namespace Testing
         {
             try
             {
+                //If there are no books selected, the string will be empty
                 string filePath = txtFilePath.Text;
                 if (filePath == "") throw new Exception("There are no books selected!");
 
+                //It will only open the directory when the selected book is stil there
                 FileInfo fileInfo = new FileInfo(filePath);
                 if (!fileInfo.Exists) throw new Exception("The selected book has been deleted or moved!");
+                // TODO: Delete the book if it is no longer inside a virtual storage
                 Process.Start("explorer.exe", Path.GetDirectoryName(filePath));
             }
             catch (Exception ex)
@@ -87,12 +90,18 @@ namespace Testing
 
         }
 
+        /// <summary>
+        /// Happens when you click in a book in the list of books
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void lstBooks_MouseClick(object sender, EventArgs e)
         {
             ListViewItem selectedBook = lstBooks.SelectedItems[0];
+
             if (!String.IsNullOrEmpty(selectedBook.Tag.ToString()))
             {
-                //Sets the information of the selected book
+                //Sets the information of the selected book on the texts
                 Document ebook        = (Document)selectedBook.Tag;
 
                 txtFileName.Text      = ebook.FileName; 

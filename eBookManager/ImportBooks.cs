@@ -14,6 +14,7 @@ namespace Testing
     {
         private string _jsonPath = "";
         private List<StorageSpace> _spaces = new List<StorageSpace>(); 
+        private int previousSelectedSpaceIndex = 0;
         private enum _storageSpaceSelection 
         { 
             New = -9999,
@@ -59,6 +60,7 @@ namespace Testing
                 dlVirtualStorageSpaces.Items.Add("<create new storage space>");
             }
             lblEbookCount.Text = "";
+            txtStorageSpaceDescription.Text = "";
         }
 
         /// <summary>
@@ -110,6 +112,11 @@ namespace Testing
             }
         }
 
+        /// <summary>
+        /// What happens when you click the button to select the source folder
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void btnSelectSourceFolder_Click(object sender, EventArgs e)
         {
             try
@@ -140,7 +147,11 @@ namespace Testing
             }
         }
         
-
+        /// <summary>
+        /// What happens after you select a book inside the Tree View
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void tvFoundBooks_AfterSelect(object sender, TreeViewEventArgs e)
         {
             DocumentEngine engine = new DocumentEngine();
@@ -167,10 +178,11 @@ namespace Testing
         }
 
         /// <summary>
-        /// It populates the Storage Spaces List
+        /// It populates the Virtual Storage Spaces List
         /// </summary>
         private void PopulateStorageSpacesList()
         {
+            //previousSelectedSpaceIndex = dlVirtualStorageSpaces.SelectedIndex;
 
             //Creates a list of a key value pair where the key is the intand the value is the string
             List<KeyValuePair<int, string>> storageSpaces = new List<KeyValuePair<int, string>>();
@@ -195,6 +207,7 @@ namespace Testing
             dlVirtualStorageSpaces.DataSource    = new BindingSource(storageSpaces, null);
             dlVirtualStorageSpaces.DisplayMember = "Value";
             dlVirtualStorageSpaces.ValueMember = "Key";
+            dlVirtualStorageSpaces.SelectedIndex = previousSelectedSpaceIndex;
 
         }
 
@@ -206,7 +219,7 @@ namespace Testing
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void dlVirtualStorageSpaces_SelectedIndexChanged(object sender, EventArgs e)
-        {
+        { 
             //if the virtual space selected is <create new> then the the new virtual space setting will appear
             int selectedValue = dlVirtualStorageSpaces.SelectedValue.ToString().ToInt();
             if(selectedValue == (int) _storageSpaceSelection.New) //-9999
@@ -215,11 +228,14 @@ namespace Testing
                 lblStorageSpaceDescription.Visible = true; 
                 txtStorageSpaceDescription.ReadOnly = false; 
                 btnSaveNewStorageSpace.Visible = true;
-                btnCancelNewStorageSpaceSave.Visible = true; 
+                btnCancelNewStorageSpaceSave.Visible = true;
+                previousSelectedSpaceIndex = dlVirtualStorageSpaces.SelectedIndex;
                 dlVirtualStorageSpaces.Enabled = false; 
                 btnAddNewStorageSpace.Enabled = false; 
                 lblEbookCount.Text = "";
- 
+                txtStorageSpaceDescription.Text = "";
+
+
             }
             //If the virtual space selected is not <Select Virtual Space>
             else if(selectedValue != (int) _storageSpaceSelection.NoSelection) // -1
@@ -263,6 +279,7 @@ namespace Testing
                 //If the size of the name the user has typed isn't equal to 0
                 if (txtNewStorageSpaceName.Text.Length != 0)
                 {
+                    
                     string newName = txtNewStorageSpaceName.Text;
                     bool spaceExists = (!_spaces.StorageSpaceExists(newName, out int nextID)) ? false : throw new Exception(" The storage space you are trying to add already exists.");
                     if (!spaceExists)
@@ -272,9 +289,11 @@ namespace Testing
                         newSpace.ID = nextID;
                         newSpace.Description = txtStorageSpaceDescription.Text;
                         _spaces.Add(newSpace);
+                        
 
                         PopulateStorageSpacesList(); // Save new Storage Space Name 
 
+                        dlVirtualStorageSpaces.SelectedIndex = newSpace.ID;
                         //Hide the set up for the new storage space
                         txtNewStorageSpaceName.Clear(); 
                         txtNewStorageSpaceName.Visible = false; 
@@ -282,8 +301,9 @@ namespace Testing
                         txtStorageSpaceDescription.ReadOnly = true; 
                         txtStorageSpaceDescription.Clear(); 
                         btnSaveNewStorageSpace.Visible = false; 
-                        btnCancelNewStorageSpaceSave.Visible = false; 
+                        btnCancelNewStorageSpaceSave.Visible = false;
                         dlVirtualStorageSpaces.Enabled = true;
+                        dlVirtualStorageSpaces.SelectedIndex = previousSelectedSpaceIndex;
                         btnAddNewStorageSpace.Enabled = true;
 
                     }
@@ -303,11 +323,14 @@ namespace Testing
         /// <param name="e"></param>
         private void btnAddNewStorageSpace_Click(object sender, EventArgs e)
         {
+            lblEbookCount.Text = "";
+            txtStorageSpaceDescription.Text = "";
             txtNewStorageSpaceName.Visible = true;
             lblStorageSpaceDescription.Visible = true; 
             txtStorageSpaceDescription.ReadOnly = false; 
             btnSaveNewStorageSpace.Visible = true; 
-            btnCancelNewStorageSpaceSave.Visible = true; 
+            btnCancelNewStorageSpaceSave.Visible = true;
+            previousSelectedSpaceIndex = dlVirtualStorageSpaces.SelectedIndex;
             dlVirtualStorageSpaces.Enabled = false;
             btnAddNewStorageSpace.Enabled = false;
 
@@ -344,18 +367,21 @@ namespace Testing
         /// <returns></returns>
         private async Task UpdateStorageSpaceBooks(int storageSpaceId) 
         {
+            previousSelectedSpaceIndex = dlVirtualStorageSpaces.SelectedIndex;
             try
             {
                 int iCount = (from s in _spaces 
                               where s.ID == storageSpaceId 
                               select s).Count();
-                
-                if (iCount > 0) // The space will always exist 
+
+                // The space will always exist 
+                if (iCount > 0)
                 {
                     StorageSpace existingSpace = (from s in _spaces 
                                                   where s.ID == storageSpaceId 
                                                   select s). First(); 
                     List < Document > ebooks = existingSpace.BookList; 
+
                     //Counts how many books of the same name in the storage space
                     int eBooksExist = (ebooks != null) ? (from b in ebooks 
                                                           where $"{ b.FileName}". Equals( $"{ txtFileName.Text.Trim()}") 
@@ -398,6 +424,7 @@ namespace Testing
             { 
                 MessageBox.Show( ex.Message); 
             }
+            dlVirtualStorageSpaces.SelectedIndex = previousSelectedSpaceIndex;
         }
 
         /// <summary>
@@ -406,7 +433,8 @@ namespace Testing
         /// <param name="book"></param>
         private void SetBookFields(Document book)
         {
-            book.FileName       = txtFileName.Text; book.Extension = txtExtension.Text;
+            book.FileName       = txtFileName.Text;
+            book.Extension = txtExtension.Text;
             book.LastAccessed   = dtLastAccessed.Value; 
             book.Created        = dtCreated.Value; 
             book.FilePath       = txtFilePath.Text; 
@@ -435,6 +463,7 @@ namespace Testing
             btnSaveNewStorageSpace.Visible = false;
             btnCancelNewStorageSpaceSave.Visible = false;
             dlVirtualStorageSpaces.Enabled = true;
+            dlVirtualStorageSpaces.SelectedIndex = previousSelectedSpaceIndex;
             btnAddNewStorageSpace.Enabled = true;
         }
     }
