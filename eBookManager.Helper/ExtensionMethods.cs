@@ -13,7 +13,7 @@ namespace eBookManager.Helper
     {
 
         /// <summary>
-        /// Tries to parse into an integer
+        /// Helper function that tries to parse into an integer
         /// </summary>
         /// <param name="value"></param>
         /// <param name="defaultInteger"></param>
@@ -38,7 +38,7 @@ namespace eBookManager.Helper
         }
 
         /// <summary>
-        /// Turns the bytes ammount into MegaBytes
+        /// Helper functions that turns the bytes ammount into MegaBytes
         /// </summary>
         /// <param name="bytes"></param>
         /// <returns></returns>
@@ -59,6 +59,7 @@ namespace eBookManager.Helper
             storageSpaceId = 0;
             if (space.Count() != 0)
             {
+                //Tries to find a storage space with the same name, if it is not found, the ID of the storage space will be the next available integer
                 int count = (from r in space
                              where r.Name.Equals(nameValueToCheck)
                              select r).Count();
@@ -79,6 +80,7 @@ namespace eBookManager.Helper
         public async static Task WriteToDataStore(this List<StorageSpace> value,
             string storagePath, bool appendToExistingFile = false)
         {
+            //Creates the fille and serializes the information on value into the file with that path
             using (FileStream fs = File.Create(storagePath))
                 await JsonSerializer.SerializeAsync(fs, value);
         }
@@ -91,18 +93,20 @@ namespace eBookManager.Helper
         /// <returns></returns>
         public async static Task<List<StorageSpace>> ReadFromDataStore(this List<StorageSpace> value, string storagePath)
         {
+            //If the file doesn't exist, it will be created
             if(!File.Exists(storagePath))
             {
                 var newFile = File.Create(storagePath);
                 newFile.Close();
             }
 
+            //It open the file and puts the Json information into the storage spaces
             FileStream fileStream = File.OpenRead(storagePath);
-            FileStream fs = fileStream;
-            if (fs.Length == 0) return new List<StorageSpace>();
+            if (fileStream.Length == 0) return new List<StorageSpace>();
 
-            var storageList = await JsonSerializer.DeserializeAsync<List<StorageSpace>>(fs);
+            var storageList = await JsonSerializer.DeserializeAsync<List<StorageSpace>>(fileStream);
 
+            //Returns the storage space list with all the informations inside the Json inside of it
             return storageList;
         }
     }

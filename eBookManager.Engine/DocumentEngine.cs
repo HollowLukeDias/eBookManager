@@ -21,9 +21,12 @@ namespace eBookManager.Engine
                 bool error)
                 GetFileProperties(string filePath)
         {
+            //Initializes the tuple with default values
             var returnTuple = (created: DateTime.MinValue,
                                lastDateAccessed: DateTime.MinValue, name: "", ext: "",
                                fileSize: 0L, error: false);
+
+            //Tries to find the file with the path equals to filePath, if it can be found, its values are added, otherwise error returns as true
             try
             {
                 FileInfo fi = new FileInfo(filePath);

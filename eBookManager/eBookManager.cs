@@ -24,6 +24,7 @@ namespace Testing
             _spaces = await _spaces.ReadFromDataStore(_jsonPath); 
             
             //These are used because .Net Core 3 does not support binary serialization
+            //However, I couldn't update it to .Net Core 3, I will still leave this here, tho
 
             // imageList1 
             imageList1.Images.Add("storage_space_cloud.png", Image.FromFile("img/storage_space_cloud.png")); 
@@ -133,6 +134,12 @@ namespace Testing
             PopulateStorageSpaceList();
         }
 
+
+        /// <summary>
+        /// Happens when you click on the storage space list, it will then show the books of that list
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void lstStorageSpaces_MouseClick(object sender, EventArgs e)
         {
 
@@ -147,15 +154,21 @@ namespace Testing
             PopulateContainedBooks(ebookList);
         }
 
-        private void PopulateContainedBooks(List<Document> ebookList)
+
+        /// <summary>
+        /// It populates the book list with all the books contained in a Virutal Storage Space 
+        /// </summary>
+        /// <param name="ebookListOnVirtualStorageSpace"></param>
+        private void PopulateContainedBooks(List<Document> ebookListOnVirtualStorageSpace)
         {
-            //Clear the selections
+            //Clear the selections of books that were previously there and remove the text of the text on the informations
             lstBooks.Clear();
             ClearSelectedBook();
 
-            if(ebookList != null)
+            //If there are books inside that virtual storage space
+            if(ebookListOnVirtualStorageSpace != null)
             {
-                foreach(Document eBook in ebookList)
+                foreach(Document eBook in ebookListOnVirtualStorageSpace)
                 {
                     ListViewItem book = new ListViewItem(eBook.Title, 1);
                     book.Tag = eBook;
@@ -170,6 +183,10 @@ namespace Testing
             }
         }
 
+
+        /// <summary>
+        /// It clears all the text of the Contol of type TextBox inside the group box Book Details
+        /// </summary>
         private void ClearSelectedBook()
         {
             //Changes the text of all the TextBox in the group box Book Details into "" (nothing)
